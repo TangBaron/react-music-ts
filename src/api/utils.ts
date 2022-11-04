@@ -1,4 +1,6 @@
-export const getCount = (count: number) => {
+type countFunc = (count: number) => string | number | undefined
+
+export const getCount: countFunc = (count: number) => {
   if (count < 0) return;
   if (count < 10000) {
     return count;

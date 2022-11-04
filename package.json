@@ -4,6 +4,12 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@better-scroll/core": "^2.5.0",
+    "@better-scroll/mouse-wheel": "^2.5.0",
+    "@better-scroll/observe-dom": "^2.5.0",
+    "@better-scroll/pull-down": "^2.5.0",
+    "@better-scroll/pull-up": "^2.5.0",
+    "@better-scroll/scroll-bar": "^2.5.0",
     "@reduxjs/toolkit": "^1.8.6",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",

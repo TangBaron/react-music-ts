@@ -1,6 +1,8 @@
 import React from "react";
 import Slider from "../../components/slider/slider";
 import RecommendList from "../../components/list/list";
+import { Content } from "./style";
+import Scroll from "../../baseUI/scroll";
 
 const Recommand: React.FC = () => {
   //mock 数据
@@ -18,10 +20,14 @@ const Recommand: React.FC = () => {
   });
 
   return (
-    <div>
-      <Slider bannerList={bannerList}></Slider>
-      <RecommendList recommendList={recommendList}></RecommendList>
-    </div>
+    <Content>
+      <Scroll>
+        <div>
+          <Slider bannerList={bannerList}></Slider>
+          <RecommendList recommendList={recommendList}></RecommendList>
+        </div>
+      </Scroll>
+    </Content>
   )
 }
 
