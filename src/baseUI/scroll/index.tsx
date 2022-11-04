@@ -78,7 +78,7 @@ const Scroll = forwardRef<IRef, Partial<IProps>>(({
       click: click,
       //  检测dom变化
       observeDOM: true,
-      // //  鼠标滚轮设置
+      //  鼠标滚轮设置
       // mouseWheel: {
       //   speed: 20,
       //   invert: false,
