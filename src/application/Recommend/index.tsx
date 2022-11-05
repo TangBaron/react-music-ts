@@ -7,24 +7,33 @@ import Scroll from "../../baseUI/scroll";
 import { useAppDispatch, useAppSelector } from "../../store";
 // 导入两个action
 import { getBanners, getRecommendList } from "./feature";
+import { forceCheck } from 'parm-react-lazyload';
+import Loading from '../../baseUI/loading';
 
 const Recommand: React.FC = () => {
 
-  const { bannerList, recommendList } = useAppSelector(state => state.recommend);
+  const { bannerList, recommendList, enterLoading } = useAppSelector(state => state.recommend);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getBanners());
-    dispatch(getRecommendList());
+    if (bannerList.length === 0) {
+      dispatch(getBanners());
+    }
+    if (recommendList.length === 0) {
+      dispatch(getRecommendList());
+    }
   }, [])
 
 
   return (
     <Content>
-      <Scroll>
+      <Scroll onScroll={forceCheck}>
         <div>
           <Slider bannerList={bannerList}></Slider>
           <RecommendList recommendList={recommendList}></RecommendList>
+          {
+            enterLoading ? <Loading></Loading> : null
+          }
         </div>
       </Scroll>
     </Content>

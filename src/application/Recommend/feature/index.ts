@@ -4,12 +4,14 @@ import { getBannerRequest, getRecommendListRequest } from "../../../api/request"
 // 定义数据格式
 interface RecommendState {
   bannerList: any[],
-  recommendList: any[]
+  recommendList: any[],
+  enterLoading: boolean
 }
 
 const initialState = {
   bannerList: [],
-  recommendList: []
+  recommendList: [],
+  enterLoading: true
 } as RecommendState;
 
 // 创建thunk
@@ -48,6 +50,7 @@ const recommendSlice = createSlice({
     })
     builder.addCase(getRecommendList.fulfilled, (state, action) => {
       state.recommendList = action.payload;
+      state.enterLoading = false;
     })
   }
 })
