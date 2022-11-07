@@ -1,8 +1,115 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import Horizon from '../../baseUI/horizen-item';
+import { categoryTypes, alphaTypes } from "../../api/config";
+import { NavContainer, ListContainer, List, ListItem } from "./style";
+import Scroll from "../../baseUI/scroll";
+import {
+  changePageCount,
+  changeEnterLoading,
+  changePullDownLoading,
+  changePullupLoading,
+  getHotSingerList,
+  getSingerList
+} from './feature/index';
+import { useAppDispatch, useAppSelector } from "../../store";
+import Loading from "../../baseUI/loading";
+import LazyLoad, { forceCheck } from "parm-react-lazyload";
 
 const Singers: React.FC = () => {
+  const [category, setCategory] = useState<string>('');
+  const [alpha, setAlpha] = useState<string>('');
+  const { pageCount, singerList, enterLoading, pullUpLoading, pullDownLoading } = useAppSelector(state => state.singers);
+  const dispatch = useAppDispatch();
+
+  const handleUpdateAlpha = (val: string) => {
+    setAlpha(val);
+    updateDispatch(category, val);
+  }
+
+  const handleUpdateCategory = (val: string) => {
+    setCategory(val);
+    updateDispatch(val, alpha);
+  }
+
+  // 定义处理函数
+  // 默认获得热门歌手列表
+  const getHotSingerDispath = () => {
+    dispatch(getHotSingerList(0));
+  }
+
+  const updateDispatch = (category: any, alpha: any) => {
+    dispatch(changePageCount(0));
+    dispatch(changeEnterLoading(true));
+    dispatch(getSingerList({ category, alpha, pageCount: 0 }));
+  }
+
+  const pullUpRefreshDispath = (category: any, alpha: any, pageCount: any, hot: boolean) => {
+    dispatch(changePullupLoading(true));
+    dispatch(changePageCount(pageCount + 1));
+    if (hot) {
+      dispatch(getHotSingerList(pageCount + 1));
+    } else {
+      dispatch(getSingerList({ category, alpha, pageCount: pageCount + 1 }));
+    }
+  }
+
+  const pullDownRefreshDispatch = (category: any, alpha: any) => {
+    dispatch(changePullDownLoading(true));
+    dispatch(changePageCount(0));
+    if (category === '' && alpha === '') {
+      dispatch(getHotSingerList(0));
+    } else {
+      dispatch(getSingerList({ category, alpha, pageCount: 0 }))
+    }
+  }
+
+  const handlePullUp = () => {
+    pullUpRefreshDispath(category, alpha, pageCount, category === '');
+  }
+
+  const handlePullDown = () => {
+    pullDownRefreshDispatch(category, alpha);
+  }
+
+  useEffect(() => {
+    getHotSingerDispath();
+  }, [])
+
   return (
-    <div>Singers</div>
+    <div>
+      <NavContainer>
+        <Horizon oldVal={category} list={categoryTypes} title={'分类:(默认热门):'} handleClick={handleUpdateCategory}></Horizon>
+        <Horizon oldVal={alpha} list={alphaTypes} title={'首字母:'} handleClick={handleUpdateAlpha}></Horizon>
+      </NavContainer>
+      <ListContainer>
+        {enterLoading ? <Loading></Loading> : null}
+        <Scroll
+          onScroll={forceCheck}
+          pullUpLoading={pullUpLoading}
+          pullDownLoading={pullDownLoading}
+          pullUp={handlePullUp}
+          pullDown={handlePullDown}
+        >
+          <List>
+            {
+              singerList.map((item, index) => {
+                return (
+                  <ListItem key={item.accountId + "" + index}>
+                    <div className="img_wrapper">
+                      <LazyLoad placeholder={<img width="100%" height="100%" src={require('./singer.png')} alt="music" />}>
+                        <img src={`${item.picUrl}?param=300x300`} width="100%" height="100%" alt="music" />
+                      </LazyLoad>
+                    </div>
+                    <span className="name">{item.name}</span>
+                  </ListItem>
+                )
+              })
+            }
+          </List>
+        </Scroll>
+      </ListContainer>
+    </div>
+
   )
 }
 

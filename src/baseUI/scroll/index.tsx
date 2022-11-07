@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useImperativeHandle, forwardRef } from 'react';
 import BScroll from '@better-scroll/core';
 import ObserveDOM from '@better-scroll/observe-dom'
 import MouseWheel from '@better-scroll/mouse-wheel'
@@ -7,6 +7,9 @@ import PullDown from '@better-scroll/pull-down'
 import Pullup from '@better-scroll/pull-up'
 import { BScrollConstructor } from '@better-scroll/core/dist/types/BScroll'
 import styled from 'styled-components';
+import Loading from '../loading';
+import LoadingV2 from '../loading_v2';
+import _ from 'lodash';
 
 BScroll.use(ObserveDOM)
 BScroll.use(MouseWheel)
@@ -52,6 +55,30 @@ const ScrollContainer = styled.div`
   height: 100%;
   overflow: hidden;
 `
+
+// PullUpLoading
+const PullUpLoading = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 5px;
+  width: 60px;
+  height: 60px;
+  margin: auto;
+  z-index: 100;
+`
+
+//PullDownLoading
+const PullDownLoading = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0px;
+  height: 30px;
+  margin: auto;
+  z-index: 100;
+`
+
 // es6解构语法提供默认值
 const Scroll = forwardRef<IRef, Partial<IProps>>(({
   direction = 'vertical',
@@ -60,6 +87,8 @@ const Scroll = forwardRef<IRef, Partial<IProps>>(({
   onScroll = null,
   pullUp = null,
   pullDown = null,
+  pullUpLoading = false,
+  pullDownLoading = false,
   bounceTop = true,
   bounceBottom = true,
   children
@@ -120,6 +149,10 @@ const Scroll = forwardRef<IRef, Partial<IProps>>(({
     }
   }, [bScroll, onScroll]);
 
+  const pullUpDebounce = useCallback(_.debounce(pullUp !== null ? pullUp : () => { }, 500), [pullUp])
+
+  const pullDownDebounce = useCallback(_.debounce(pullDown !== null ? pullDown : () => { }, 500), [pullDown]);
+
   //上拉到底调用上拉加载数据的函数
   useEffect(() => {
     if (!bScroll && !pullUp) {
@@ -127,7 +160,7 @@ const Scroll = forwardRef<IRef, Partial<IProps>>(({
     }
     if (bScroll && pullUp) {
       bScroll.on('pullingUp', () => {
-        pullUp();
+        pullUpDebounce();
         setTimeout(() => {
           bScroll?.finishPullUp()
           bScroll.refresh();
@@ -137,7 +170,7 @@ const Scroll = forwardRef<IRef, Partial<IProps>>(({
     return () => {
       bScroll?.off('pullingUp');
     }
-  }, [pullUp, bScroll]);
+  }, [pullUp, pullUpDebounce, bScroll]);
 
   //下拉刷新
   useEffect(() => {
@@ -146,7 +179,7 @@ const Scroll = forwardRef<IRef, Partial<IProps>>(({
     }
     if (bScroll && pullDown) {
       bScroll.on('pullingDown', () => {
-        pullDown();
+        pullDownDebounce();
         setTimeout(() => {
           bScroll?.finishPullDown();
           bScroll.refresh();
@@ -156,7 +189,7 @@ const Scroll = forwardRef<IRef, Partial<IProps>>(({
     return () => {
       bScroll?.off('pullingDown');
     }
-  }, [pullDown, bScroll]);
+  }, [pullDown, pullDownDebounce, bScroll]);
 
   //每次渲染都要刷新实例，防止无法滑动(如果不加依赖项，该函数会在挂载，更新和退出时候都会执行)
   useEffect(() => {
@@ -187,9 +220,18 @@ const Scroll = forwardRef<IRef, Partial<IProps>>(({
     }
   )
 
+  const PullUpdisplayStyle = pullUpLoading ? { display: "" } : { display: "none" };
+  const PullDowndisplayStyle = pullDownLoading ? { display: "" } : { display: "none" };
   return (
     <ScrollContainer ref={scrollContainerRef}>
       {children}
+      {/* 滑动到底部加载动画 */}
+      <PullUpLoading style={PullUpdisplayStyle}>
+        <LoadingV2></LoadingV2>
+      </PullUpLoading>
+      <PullDownLoading style={PullDowndisplayStyle}>
+        <Loading></Loading>
+      </PullDownLoading>
     </ScrollContainer>
   )
 })

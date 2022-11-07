@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 import { reducer as recommendReducer } from '../application/Recommend/feature'
+import { reducer as singersReducer } from '../application/Singers/feature';
 
 const reducer = {
-  recommend: recommendReducer
+  recommend: recommendReducer,
+  singers: singersReducer
 }
 
 export const store = configureStore({
