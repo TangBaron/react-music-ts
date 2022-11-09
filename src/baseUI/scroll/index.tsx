@@ -131,6 +131,9 @@ const Scroll = forwardRef<IRef, Partial<IProps>>(({
       }
     });
     setBScroll(scroll);
+    setTimeout(() => {
+      scroll.refresh();
+    }, 500);
     return () => {
       setBScroll(null);
     }

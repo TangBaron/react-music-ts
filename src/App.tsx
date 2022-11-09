@@ -4,13 +4,16 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import routes from './routes';
 import { store } from './store';
 import { Provider } from 'react-redux';
+import { Data } from './application/Singers/data';
 
 const App: React.FC = () => {
   return (
     <>
       <Provider store={store}>
         <GlobalStyle></GlobalStyle>
-        <RouterProvider router={createBrowserRouter(routes)}></RouterProvider>
+        <Data>
+          <RouterProvider router={createBrowserRouter(routes)}></RouterProvider>
+        </Data>
       </Provider>
     </>
   );

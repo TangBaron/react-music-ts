@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import Horizon from '../../baseUI/horizen-item';
 import { categoryTypes, alphaTypes } from "../../api/config";
 import { NavContainer, ListContainer, List, ListItem } from "./style";
@@ -14,20 +14,21 @@ import {
 import { useAppDispatch, useAppSelector } from "../../store";
 import Loading from "../../baseUI/loading";
 import LazyLoad, { forceCheck } from "parm-react-lazyload";
+import { CategoryDataContext, changeCategory_context, changeAlpha_context } from "./data";
 
 const Singers: React.FC = () => {
-  const [category, setCategory] = useState<string>('');
-  const [alpha, setAlpha] = useState<string>('');
   const { pageCount, singerList, enterLoading, pullUpLoading, pullDownLoading } = useAppSelector(state => state.singers);
   const dispatch = useAppDispatch();
+  const { data, categoryDispatch } = useContext(CategoryDataContext);
+  const { category, alpha } = data;
 
   const handleUpdateAlpha = (val: string) => {
-    setAlpha(val);
+    categoryDispatch({ type: changeAlpha_context, payload: val });
     updateDispatch(category, val);
   }
 
   const handleUpdateCategory = (val: string) => {
-    setCategory(val);
+    categoryDispatch({ type: changeCategory_context, payload: val })
     updateDispatch(val, alpha);
   }
 
@@ -72,7 +73,9 @@ const Singers: React.FC = () => {
   }
 
   useEffect(() => {
-    getHotSingerDispath();
+    if (singerList.length === 0) {
+      getHotSingerDispath();
+    }
   }, [])
 
   return (
