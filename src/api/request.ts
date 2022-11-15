@@ -44,3 +44,9 @@ export const getSingerListRequest: RequestFun = (category, alpha, count) => {
     }&initial=${alpha.toLowerCase()}&offset=${count}`
   );
 }
+
+export const getRankListRequest: RequestFun = () => {
+  return axiosInstance.get(`/toplist/detail`);
+}
+
+

@@ -133,11 +133,20 @@ const Scroll = forwardRef<IRef, Partial<IProps>>(({
     setBScroll(scroll);
     setTimeout(() => {
       scroll.refresh();
-    }, 500);
+    }, 1000);
     return () => {
       setBScroll(null);
     }
   }, []);
+
+  // children改变后都要刷新一下
+  useEffect(() => {
+    if (bScroll) {
+      bScroll.refresh();
+      bScroll?.finishPullDown();
+      bScroll?.finishPullUp();
+    }
+  }, [children])
 
   //绑定scroll事件
   useEffect(() => {
@@ -197,9 +206,9 @@ const Scroll = forwardRef<IRef, Partial<IProps>>(({
   //每次渲染都要刷新实例，防止无法滑动(如果不加依赖项，该函数会在挂载，更新和退出时候都会执行)
   useEffect(() => {
     if (refresh && bScroll) {
+      bScroll.refresh();
       bScroll?.finishPullDown();
       bScroll?.finishPullUp();
-      bScroll.refresh();
     }
   })
 
