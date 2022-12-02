@@ -4,12 +4,20 @@ import { IListItem } from './interface';
 import { PlayCircleOutlined } from '@ant-design/icons';
 import { getCount } from '../../api/utils';
 import LazyLoad from 'parm-react-lazyload';
+import { useNavigate } from 'react-router-dom';
 
 interface IProps {
   recommendList: IListItem[]
 }
 
 const RecommendList: React.FC<IProps> = ({ recommendList }) => {
+
+  const navigate = useNavigate();
+
+  const enterDetail = (id: string): void => {
+    navigate(`/recommend/${id}`)
+  }
+
   return (
     <ListWrapper>
       <h1 className="title">推荐歌单</h1>
@@ -17,7 +25,7 @@ const RecommendList: React.FC<IProps> = ({ recommendList }) => {
         {
           recommendList.map((item, index) => {
             return (
-              <ListItem key={item.id + index}>
+              <ListItem key={item.id + index} onClick={() => enterDetail(item.id)}>
                 <div className="img_wrapper">
                   <div className="decorate"></div>
                   {/* 加此参数可以减小请求的图片资源大小 */}

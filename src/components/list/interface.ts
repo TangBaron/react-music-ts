@@ -1,5 +1,5 @@
 export interface IListItem {
-  id: number,
+  id: string,
   picUrl: string,
   playCount: number,
   name: string

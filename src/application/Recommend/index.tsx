@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import { getBanners, getRecommendList } from "./feature";
 import { forceCheck } from 'parm-react-lazyload';
 import Loading from '../../baseUI/loading';
+import { Outlet } from "react-router-dom";
 
 const Recommand: React.FC = () => {
 
@@ -36,6 +37,7 @@ const Recommand: React.FC = () => {
           }
         </div>
       </Scroll>
+      <Outlet></Outlet>
     </Content>
   )
 }

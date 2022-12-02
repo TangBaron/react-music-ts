@@ -4,6 +4,7 @@ import Recommend from '../application/Recommend';
 import Singers from '../application/Singers';
 import Rank from '../application/Rank';
 import { RouteObject } from 'react-router';
+import Album from '../application/Album';
 
 const routes: RouteObject[] = [
   {
@@ -12,11 +13,17 @@ const routes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <Recommend></Recommend>
+        element: <Recommend></Recommend>,
       },
       {
         path: "recommend",
-        element: <Recommend></Recommend>
+        element: <Recommend></Recommend>,
+        children: [
+          {
+            path: '/recommend/:id',
+            element: <Album></Album>
+          }
+        ]
       },
       {
         path: 'singers',
