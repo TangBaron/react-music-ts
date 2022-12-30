@@ -20,3 +20,12 @@ export const filterIndex = (rankList: any[]): number => {
   }
   return -1;
 }
+
+export const getName = (list: { name: string }[]) => {
+  let str = "";
+  list.map((item, index) => {
+    str += index === 0 ? item.name : '/' + item.name;
+    return item;
+  })
+  return str;
+}

@@ -12,8 +12,7 @@ const HeaderContainer = styled.div`
   z-index: 100;
   display: flex;
   line-height: 40px;
-  /* color: ${style['font-color-light']}; */
-  color: 'black';
+  color: ${style['font-color-light']};
   .back {
     display: flex;
     align-items: center;
@@ -27,24 +26,46 @@ const HeaderContainer = styled.div`
   }
 `
 
+const Marquee = styled.div`
+  width: 100%;
+  height: 35px;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  .text {
+    position: absolute;
+    animation: marquee 10s linear infinite;
+  }
+  @keyframes marquee {
+    from {
+      transform: translateX(100%);
+    }
+    to{
+      transform: translateX(-100%);
+    }
+  }
+`
+
 interface IProps {
   handleClick: (...res: any) => void,
-  title: string
+  title: string,
+  isMarquee: boolean
 }
 
-interface IRef {
-
-}
+type IRef = HTMLDivElement;
 
 // 这里处理函数组件拿不到ref的问题所以用forwardRef
 const Header = forwardRef<IRef, IProps>(({
   handleClick = () => { },
-  title = '标题'
+  title = '标题',
+  isMarquee = false
 }, ref) => {
   return (
-    <HeaderContainer>
+    <HeaderContainer ref={ref}>
       <LeftOutlined className="back" onClick={handleClick} />
-      <h1>{title}</h1>
+      {
+        isMarquee ? <Marquee><div className="text"><h1>{title}</h1></div></Marquee> : <h1>{title}</h1>
+      }
     </HeaderContainer>
   )
 })
