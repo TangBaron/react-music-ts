@@ -31,7 +31,13 @@ const routes: RouteObject[] = [
       },
       {
         path: 'rank',
-        element: <Rank></Rank>
+        element: <Rank></Rank>,
+        children: [
+          {
+            path: '/rank/:id',
+            element: <Album></Album>
+          }
+        ]
       }
     ]
   }
