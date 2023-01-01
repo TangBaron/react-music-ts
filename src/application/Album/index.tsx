@@ -1,95 +1,15 @@
-import React, { memo, useState, useRef } from "react";
+import React, { memo, useState, useRef, useEffect } from "react";
 import { Container, Menu, TopDesc, SongList, SongItem } from './style';
 import { CSSTransition } from 'react-transition-group';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from '../../baseUI/header';
 import Scroll from "../../baseUI/scroll";
 import { StepForwardOutlined, CommentOutlined, LikeOutlined, PlusOutlined, MoreOutlined, PlayCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { getCount, getName } from "../../api/utils";
 import style from '../../assets/global-style';
-
-//mock歌单数据
-const currentAlbum = {
-  creator: {
-    avatarUrl: "http://p1.music.126.net/O9zV6jeawR43pfiK2JaVSw==/109951164232128905.jpg",
-    nickname: "浪里推舟"
-  },
-  coverImgUrl: "http://p2.music.126.net/ecpXnH13-0QWpWQmqlR0gw==/109951164354856816.jpg",
-  subscribedCount: 2010711,
-  name: "听完就睡，耳机是天黑以后柔软的梦境",
-  tracks: [
-    {
-      name: "我真的受伤了",
-      ar: [{ name: "张学友" }, { name: "周华健" }],
-      al: {
-        name: "学友 热"
-      }
-    },
-    {
-      name: "我真的受伤了",
-      ar: [{ name: "张学友" }, { name: "周华健" }],
-      al: {
-        name: "学友 热"
-      }
-    },
-    {
-      name: "我真的受伤了",
-      ar: [{ name: "张学友" }, { name: "周华健" }],
-      al: {
-        name: "学友 热"
-      }
-    },
-    {
-      name: "我真的受伤了",
-      ar: [{ name: "张学友" }, { name: "周华健" }],
-      al: {
-        name: "学友 热"
-      }
-    },
-    {
-      name: "我真的受伤了",
-      ar: [{ name: "张学友" }, { name: "周华健" }],
-      al: {
-        name: "学友 热"
-      }
-    },
-    {
-      name: "我真的受伤了",
-      ar: [{ name: "张学友" }, { name: "周华健" }],
-      al: {
-        name: "学友 热"
-      }
-    },
-    {
-      name: "我真的受伤了",
-      ar: [{ name: "张学友" }, { name: "周华健" }],
-      al: {
-        name: "学友 热"
-      }
-    },
-    {
-      name: "我真的受伤了",
-      ar: [{ name: "张学友" }, { name: "周华健" }],
-      al: {
-        name: "学友 热"
-      }
-    },
-    {
-      name: "我真的受伤了",
-      ar: [{ name: "张学友" }, { name: "周华健" }],
-      al: {
-        name: "学友 热"
-      }
-    },
-    {
-      name: "我真的受伤了",
-      ar: [{ name: "张学友" }, { name: "周华健" }],
-      al: {
-        name: "学友 热"
-      }
-    },
-  ]
-}
+import { changeEnterLoading, getAlbumDetail } from "./feature";
+import { useAppSelector, useAppDispatch } from "../../store";
+import Loading from "../../baseUI/loading";
 
 //定义滚动触发滑动的高度
 export const HEADER_HEIGHT = 45;
@@ -103,6 +23,15 @@ const Album: React.FC = () => {
   const [title, setTitle] = useState<string>('歌单');
   const [isMarquee, setIsMarquee] = useState<boolean>(false);
   const headerEl = useRef<HTMLDivElement>(null);
+
+  const dispatch = useAppDispatch();
+  const { currentAlbum, enterLoading } = useAppSelector(state => state.album);
+  const { id } = useParams();
+  useEffect(() => {
+    dispatch(changeEnterLoading(true))
+    dispatch(getAlbumDetail(id as string));
+    dispatch(changeEnterLoading(false));
+  }, [id]);
 
   //滚动逻辑
   const handleScroll = (pos: { x: number, y: number }) => {
@@ -133,6 +62,7 @@ const Album: React.FC = () => {
       onExited={() => { navigate(-1) }}
     >
       <Container>
+        {enterLoading ? <Loading></Loading> : null}
         <Header ref={headerEl} title={title} isMarquee={isMarquee} handleClick={() => { setShowStatus(false) }}></Header>
         <Scroll bounceTop={false} onScroll={handleScroll}>
           <div>

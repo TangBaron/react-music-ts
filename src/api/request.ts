@@ -49,4 +49,8 @@ export const getRankListRequest: RequestFun = () => {
   return axiosInstance.get(`/toplist/detail`);
 }
 
+export const getAlbumDetailRequest = (id: string) => {
+  return axiosInstance.get(`/playlist/detail?id=${id}`);
+}
+
 
