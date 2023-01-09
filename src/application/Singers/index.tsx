@@ -15,12 +15,14 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import Loading from "../../baseUI/loading";
 import LazyLoad, { forceCheck } from "parm-react-lazyload";
 import { CategoryDataContext, changeCategory_context, changeAlpha_context } from "./data";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const Singers: React.FC = () => {
   const { pageCount, singerList, enterLoading, pullUpLoading, pullDownLoading } = useAppSelector(state => state.singers);
   const dispatch = useAppDispatch();
   const { data, categoryDispatch } = useContext(CategoryDataContext);
   const { category, alpha } = data;
+  const navigate = useNavigate();
 
   const handleUpdateAlpha = (val: string) => {
     categoryDispatch({ type: changeAlpha_context, payload: val });
@@ -78,6 +80,10 @@ const Singers: React.FC = () => {
     }
   }, [])
 
+  const enterDetail = (id: string) => {
+    navigate(`/singers/${id}`);
+  }
+
   return (
     <div>
       <NavContainer>
@@ -97,7 +103,7 @@ const Singers: React.FC = () => {
             {
               singerList.map((item, index) => {
                 return (
-                  <ListItem key={item.accountId + "" + index}>
+                  <ListItem key={item.accountId + "" + index} onClick={() => { enterDetail(item.id) }}>
                     <div className="img_wrapper">
                       <LazyLoad placeholder={<img width="100%" height="100%" src={require('./singer.png')} alt="music" />}>
                         <img src={`${item.picUrl}?param=300x300`} width="100%" height="100%" alt="music" />
@@ -111,8 +117,8 @@ const Singers: React.FC = () => {
           </List>
         </Scroll>
       </ListContainer>
+      <Outlet></Outlet>
     </div>
-
   )
 }
 

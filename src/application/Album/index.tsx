@@ -1,15 +1,15 @@
 import React, { memo, useState, useRef, useEffect, useCallback } from "react";
-import { Container, Menu, TopDesc, SongList, SongItem } from './style';
+import { Container, Menu, TopDesc } from './style';
 import { CSSTransition } from 'react-transition-group';
 import { useNavigate, useParams } from "react-router-dom";
 import Header from '../../baseUI/header';
 import Scroll from "../../baseUI/scroll";
-import { StepForwardOutlined, CommentOutlined, LikeOutlined, PlusOutlined, MoreOutlined, PlayCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { getCount, getName } from "../../api/utils";
+import { StepForwardOutlined, CommentOutlined, LikeOutlined, PlusOutlined, MoreOutlined } from "@ant-design/icons";
 import style from '../../assets/global-style';
 import { changeEnterLoading, getAlbumDetail } from "./feature";
 import { useAppSelector, useAppDispatch } from "../../store";
 import Loading from "../../baseUI/loading";
+import SongList from "../SongList";
 
 //定义滚动触发滑动的高度
 export const HEADER_HEIGHT = 45;
@@ -114,35 +114,15 @@ const Album: React.FC = () => {
 
   const renderSongList: React.FC = ({ }) => {
     return (
-      <SongList showBackground={false}>
-        <div className="first_line">
-          <div className="play_all">
-            <PlayCircleOutlined className="iconfont" />
-            <span>播放全部<span className="sum">(共{currentAlbum.tracks.length}首)</span></span>
-          </div>
-          <div className="add_list">
-            <PlusCircleOutlined className="iconfont" />
-            <span>收藏({getCount(currentAlbum.subscribedCount)})</span>
-          </div>
-        </div>
-        <SongItem>
-          {
-            currentAlbum.tracks.map((item, index) => {
-              return (
-                <li key={index}>
-                  <span className="index">{index + 1}</span>
-                  <div className="info">
-                    <span>{item.name}</span>
-                    <span>
-                      {getName(item.ar)} - {item.al.name}
-                    </span>
-                  </div>
-                </li>
-              )
-            })
-          }
-        </SongItem>
-      </SongList>
+      <>
+        <SongList
+          songs={currentAlbum.tracks}
+          collectCount={currentAlbum.subscribedCount}
+          showCollect={true}
+          showBackground={true}
+        ></SongList>
+      </>
+
     )
   }
 

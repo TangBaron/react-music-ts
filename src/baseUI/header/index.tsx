@@ -47,9 +47,9 @@ const Marquee = styled.div`
 `
 
 interface IProps {
-  handleClick: (...res: any) => void,
-  title: string,
-  isMarquee: boolean
+  handleClick?: (...res: any) => void,
+  title?: string,
+  isMarquee?: boolean
 }
 
 type IRef = HTMLDivElement;

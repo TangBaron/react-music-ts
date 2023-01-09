@@ -5,6 +5,7 @@ import Singers from '../application/Singers';
 import Rank from '../application/Rank';
 import { RouteObject } from 'react-router';
 import Album from '../application/Album';
+import Singer from '../application/Singer';
 
 const routes: RouteObject[] = [
   {
@@ -27,7 +28,13 @@ const routes: RouteObject[] = [
       },
       {
         path: 'singers',
-        element: <Singers></Singers>
+        element: <Singers></Singers>,
+        children: [
+          {
+            path: '/singers/:id',
+            element: <Singer></Singer>
+          }
+        ]
       },
       {
         path: 'rank',
