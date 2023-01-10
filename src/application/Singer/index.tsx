@@ -1,173 +1,16 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { CSSTransition } from "react-transition-group";
 import { Container, ImgWrapper, CollectButton, BgLayer, SongListWrapper } from './style';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../../baseUI/header";
 import { PlusOutlined } from "@ant-design/icons";
 import Scroll from "../../baseUI/scroll";
 import SongList from '../SongList'
 import { BScrollConstructor } from "@better-scroll/core/dist/types/BScroll";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { getSingerInfo } from "./feature";
+import Loading from "../../baseUI/loading";
 
-const artist = {
-  picUrl: "https://p2.music.126.net/W__FCWFiyq0JdPtuLJoZVQ==/109951163765026271.jpg",
-  name: "薛之谦",
-  hotSongs: [
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-    {
-      name: "我好像在哪见过你",
-      ar: [{ name: "薛之谦" }],
-      al: {
-        name: "薛之谦专辑"
-      }
-    },
-  ]
-}
 
 interface IRef {
   refresh: (...rest: any) => any | undefined,
@@ -190,6 +33,15 @@ const Singer: React.FC = () => {
 
   // 往上偏移的尺寸，露出圆角
   const OFFSET = 5;
+
+  // redux相关代码
+  const { id } = useParams();
+  const dispatch = useAppDispatch();
+  const { artist, songsOfArtist: songs, loading } = useAppSelector(state => state.singer);
+
+  useEffect(() => {
+    dispatch(getSingerInfo(id as string));
+  }, []);
 
   useEffect(() => {
     // 图片组件的高度, 这里使用offsetHeight是因为offsetHeight还会包括水平滚动条等宽度
@@ -263,6 +115,7 @@ const Singer: React.FC = () => {
       onExited={() => { navigate(-1) }}
     >
       <Container play={0}>
+        {loading ? <Loading></Loading> : null}
         <Header ref={header} title={artist.name} handleClick={setShowStatusFalse}></Header>
         <ImgWrapper ref={imageWrapper} bgUrl={artist.picUrl}>
           <div className="filter"></div>
@@ -276,7 +129,7 @@ const Singer: React.FC = () => {
           <Scroll ref={songScroll} onScroll={handleScroll}>
             <SongList
               showBackground={false}
-              songs={artist.hotSongs}
+              songs={songs}
               showCollect={false}
             ></SongList>
           </Scroll>

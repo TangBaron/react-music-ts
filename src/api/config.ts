@@ -170,6 +170,13 @@ export const alphaTypes = [{
 }
 ];
 
+// 播放模式
+export enum playMode {
+  sequence = 0,
+  loop = 1,
+  random = 2
+}
+
 export const baseUrl: string = "http://localhost:3000";
 
 // 创建axios的实例及拦截器配置

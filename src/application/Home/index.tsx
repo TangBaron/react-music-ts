@@ -1,7 +1,8 @@
 import React from "react";
 import { Outlet, NavLink } from 'react-router-dom';
 import { Top, Tab, TabItem } from "./style";
-import { MenuOutlined, SearchOutlined } from '@ant-design/icons'
+import { MenuOutlined, SearchOutlined } from '@ant-design/icons';
+import Player from "../Player";
 
 const Home: React.FC = () => {
   return (
@@ -38,6 +39,7 @@ const Home: React.FC = () => {
         </NavLink>
       </Tab>
       <Outlet></Outlet>
+      <Player></Player>
     </>
   )
 }
