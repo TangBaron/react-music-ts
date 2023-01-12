@@ -153,6 +153,33 @@ export const Bottom = styled.div`
   width: 100%;
 `
 
+// ProgressWrapper组件
+export const ProgressWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  width: 80%;
+  margin: 0px auto;
+  padding: 10px 0;
+  .time {
+    color: ${style['font-color-desc']};
+    font-size: ${style['font-size-s']};
+    flex: 0 0 30px;
+    line-height: 30px;
+    width: 30px;
+    &.time-l {
+      text-align: left;
+      margin-right: 5px;
+    }
+    &.time-r {
+      text-align: right;
+      margin-left: 5px;
+    }
+  }
+  .progress-bar-wrapper {
+    flex: 1;
+  }
+`
+
 export const Operators = styled.div`
   display: flex;
   align-items: center;

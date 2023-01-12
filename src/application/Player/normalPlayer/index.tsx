@@ -6,6 +6,7 @@ import {
   Middle,
   CDWrapper,
   Bottom,
+  ProgressWrapper,
   Operators,
 } from './style';
 import {
@@ -19,6 +20,7 @@ import {
 import { IProps } from "../constants";
 import { CSSTransition } from "react-transition-group";
 import animations from 'create-keyframe-animation';
+import ProgressBar from "../../../baseUI/progress_bar";
 
 const NormalPlayer = (props: IProps) => {
   const { song, fullScreen, toggleFullScreen } = props;
@@ -139,6 +141,13 @@ const NormalPlayer = (props: IProps) => {
           </CDWrapper>
         </Middle>
         <Bottom className="bottom">
+          <ProgressWrapper>
+            <span className="time time-l">0:00</span>
+            <div className="progress-bar-wrapper">
+              <ProgressBar></ProgressBar>
+            </div>
+            <div className="time time-r">4:17</div>
+          </ProgressWrapper>
           <Operators>
             <div className="icon i-left">
               <ReloadOutlined className="iconfont"></ReloadOutlined>
