@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { getName } from "../../../api/utils";
+import { getName, formatPlayTime } from "../../../api/utils";
 import {
   NormalPlayerContainer,
   Top,
@@ -14,6 +14,7 @@ import {
   StepForwardOutlined,
   StepBackwardOutlined,
   PauseCircleOutlined,
+  PlayCircleOutlined,
   BarsOutlined,
   ReloadOutlined
 } from "@ant-design/icons";
@@ -23,7 +24,7 @@ import animations from 'create-keyframe-animation';
 import ProgressBar from "../../../baseUI/progress_bar";
 
 const NormalPlayer = (props: IProps) => {
-  const { song, fullScreen, toggleFullScreen } = props;
+  const { song, fullScreen, playing, percent, duration, currentTime, toggleFullScreen, clickPlaying, onProgressChange } = props;
   const normalPlayerRef = useRef<HTMLDivElement>(null);
   const cdWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -133,7 +134,7 @@ const NormalPlayer = (props: IProps) => {
           <CDWrapper>
             <div className="cd">
               <img
-                className="image play"
+                className={`image play ${playing ? '' : 'pause'}`}
                 src={song.al.picUrl + "?param=400x400"}
                 alt=""
               />
@@ -142,11 +143,11 @@ const NormalPlayer = (props: IProps) => {
         </Middle>
         <Bottom className="bottom">
           <ProgressWrapper>
-            <span className="time time-l">0:00</span>
+            <span className="time time-l">{formatPlayTime(currentTime)}</span>
             <div className="progress-bar-wrapper">
-              <ProgressBar></ProgressBar>
+              <ProgressBar percent={percent} percentChange={onProgressChange!}></ProgressBar>
             </div>
-            <div className="time time-r">4:17</div>
+            <div className="time time-r">{formatPlayTime(duration)}</div>
           </ProgressWrapper>
           <Operators>
             <div className="icon i-left">
@@ -156,7 +157,13 @@ const NormalPlayer = (props: IProps) => {
               <StepBackwardOutlined className="iconfont"></StepBackwardOutlined>
             </div>
             <div className="icon i-center">
-              <PauseCircleOutlined className="iconfont"></PauseCircleOutlined>
+              {
+                !playing ? (
+                  <PlayCircleOutlined className="iconfont" onClick={(e) => { clickPlaying(e, true) }}></PlayCircleOutlined>
+                ) : (
+                  <PauseCircleOutlined className="iconfont" onClick={(e) => { clickPlaying(e, false) }}></PauseCircleOutlined>
+                )
+              }
             </div>
             <div className="icon i-right">
               <StepForwardOutlined className="iconfont"></StepForwardOutlined>
@@ -167,7 +174,7 @@ const NormalPlayer = (props: IProps) => {
           </Operators>
         </Bottom>
       </NormalPlayerContainer>
-    </CSSTransition>
+    </CSSTransition >
   )
 }
 

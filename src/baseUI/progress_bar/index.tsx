@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import style from '../../assets/global-style';
 
@@ -6,6 +6,11 @@ interface ItouchInfo {
   initiated?: boolean;
   startX?: number;
   left?: number;
+}
+
+interface IProps {
+  percent: number;
+  percentChange: (curPercent: number) => void
 }
 
 const ProgressBarWrapper = styled.div`
@@ -41,11 +46,28 @@ const ProgressBarWrapper = styled.div`
   }
 `
 
-const ProgressBar = () => {
+const ProgressBar = (props: IProps) => {
+  const { percent, percentChange } = props;
+
   const progressBar = useRef<HTMLDivElement>(null);
   const progress = useRef<HTMLDivElement>(null);
   const progressBtn = useRef<HTMLDivElement>(null);
   const [touch, setTouch] = useState<ItouchInfo>({});
+
+  useEffect(() => {
+    if (percent >= 0 && percent <= 1 && !touch.initiated) {
+      const barWidth = progressBar!.current!.clientWidth;
+      const offsetWidth = percent * barWidth;
+      progress!.current!.style.width = `${offsetWidth}px`;
+      progressBtn!.current!.style['transform'] = `translate3d(${offsetWidth}px, 0, 0)`;
+    }
+  }, [percent]);
+
+  const _changePercent = () => {
+    const barWidth = progressBar!.current!.clientWidth;
+    const curPercent = progress!.current!.clientWidth / barWidth;
+    percentChange(curPercent);
+  }
 
   // 用来处理进度条的偏移
   const _offset = (offsetWidth: number) => {
@@ -81,13 +103,14 @@ const ProgressBar = () => {
     const endTouch = { ...touch };
     endTouch.initiated = false;
     setTouch(endTouch);
+    _changePercent()
   }
 
-  // 点击
   const progressClick = (e: React.MouseEvent) => {
     const rect = progressBar.current?.getBoundingClientRect();
     const offsetWidth = e.pageX - rect!.left;
     _offset(offsetWidth);
+    _changePercent();
   }
 
   return (

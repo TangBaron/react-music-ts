@@ -29,3 +29,14 @@ export const getName = (list: { name: string }[]) => {
   })
   return str;
 }
+
+export const getSongUrl = (id: string) => {
+  return `https://music.163.com/song/media/outer/url?id=${id}.mp3`;
+};
+
+export const formatPlayTime = (interval: number) => {
+  interval = Math.floor(interval);
+  const minute = Math.floor((interval / 60));
+  const second = (interval % 60).toString().padStart(2, "0");
+  return `${minute}:${second}`;
+}

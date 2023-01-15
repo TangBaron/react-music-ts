@@ -16,7 +16,9 @@ interface IState {
   // 是否展示播放列表
   showPlayList: boolean,
   // 当前歌曲信息
-  currentSong: {}
+  currentSong: {
+    [propName: string]: any
+  }
 }
 
 const initialState: IState = {

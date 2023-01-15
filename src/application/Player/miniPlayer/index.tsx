@@ -1,16 +1,21 @@
 import React, { useRef } from "react";
 import { getName } from "../../../api/utils";
 import { MiniPlayerContainer } from "./style";
-import { PauseOutlined, BarsOutlined } from "@ant-design/icons";
+import { PauseOutlined, BarsOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import { IProps } from "../constants";
 import { CSSTransition } from "react-transition-group";
 import ProgressCircle from "../../../baseUI/progress_circle";
 
 const MiniPlayer = (props: IProps) => {
-  const { song, fullScreen, toggleFullScreen } = props;
+  const {
+    song,
+    fullScreen,
+    playing,
+    percent,
+    toggleFullScreen,
+    clickPlaying,
+  } = props;
   const miniPlayerRef = useRef<HTMLDivElement>(null);
-
-  let percent = 0.2;
 
   return (
     <CSSTransition
@@ -28,7 +33,7 @@ const MiniPlayer = (props: IProps) => {
       <MiniPlayerContainer ref={miniPlayerRef} onClick={() => toggleFullScreen(true)}>
         <div className="icon">
           <div className="imgWrapper">
-            <img width="40" height="40" src={song.al.picUrl} alt="img" className="play" />
+            <img width="40" height="40" src={song.al.picUrl} alt="img" className={`play ${playing ? '' : 'pause'}`} />
           </div>
         </div>
         <div className="text">
@@ -37,7 +42,13 @@ const MiniPlayer = (props: IProps) => {
         </div>
         <div className="control">
           <ProgressCircle radius={32} percent={percent}>
-            <PauseOutlined className="iconfont icon-mini" />
+            {
+              !playing ? (
+                <PlayCircleOutlined className="iconfont icon-mini" onClick={e => clickPlaying(e, true)} />
+              ) : (
+                <PauseOutlined className="iconfont icon-mini" onClick={e => clickPlaying(e, false)} />
+              )
+            }
           </ProgressCircle>
         </div>
         <div className="control">
