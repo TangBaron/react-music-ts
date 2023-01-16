@@ -16,15 +16,32 @@ import {
   PauseCircleOutlined,
   PlayCircleOutlined,
   BarsOutlined,
-  ReloadOutlined
+  RetweetOutlined,
+  SwapOutlined,
+  MenuOutlined
 } from "@ant-design/icons";
-import { IProps } from "../constants";
+import { INormalProps } from "../constants";
 import { CSSTransition } from "react-transition-group";
 import animations from 'create-keyframe-animation';
 import ProgressBar from "../../../baseUI/progress_bar";
+import { playMode } from "../../../api/config";
 
-const NormalPlayer = (props: IProps) => {
-  const { song, fullScreen, playing, percent, duration, currentTime, toggleFullScreen, clickPlaying, onProgressChange } = props;
+const NormalPlayer = (props: INormalProps) => {
+  const {
+    song,
+    fullScreen,
+    playing,
+    percent,
+    duration,
+    currentTime,
+    toggleFullScreen,
+    clickPlaying,
+    onProgressChange,
+    handlePrev,
+    handleNext,
+    mode,
+    changeMode
+  } = props;
   const normalPlayerRef = useRef<HTMLDivElement>(null);
   const cdWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -100,6 +117,20 @@ const NormalPlayer = (props: IProps) => {
     normalPlayerRef!.current!.style.display = "none";
   }
 
+  // 根据mode获取图标
+  const getIconByMode = (mode: playMode) => {
+    switch (mode) {
+      case playMode.loop:
+        return <RetweetOutlined className="iconfont"></RetweetOutlined>
+      case playMode.sequence:
+        return <MenuOutlined className="iconfont"></MenuOutlined>
+      case playMode.random:
+        return <SwapOutlined className="iconfont"></SwapOutlined>
+      default:
+        return null;
+    }
+  }
+
   return (
     <CSSTransition
       in={fullScreen}
@@ -150,10 +181,10 @@ const NormalPlayer = (props: IProps) => {
             <div className="time time-r">{formatPlayTime(duration)}</div>
           </ProgressWrapper>
           <Operators>
-            <div className="icon i-left">
-              <ReloadOutlined className="iconfont"></ReloadOutlined>
+            <div className="icon i-left" onClick={changeMode}>
+              {getIconByMode(mode)}
             </div>
-            <div className="icon i-left">
+            <div className="icon i-left" onClick={handlePrev}>
               <StepBackwardOutlined className="iconfont"></StepBackwardOutlined>
             </div>
             <div className="icon i-center">
@@ -165,7 +196,7 @@ const NormalPlayer = (props: IProps) => {
                 )
               }
             </div>
-            <div className="icon i-right">
+            <div className="icon i-right" onClick={handleNext}>
               <StepForwardOutlined className="iconfont"></StepForwardOutlined>
             </div>
             <div className="icon i-right">

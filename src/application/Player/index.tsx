@@ -13,115 +13,62 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import MiniPlayer from "./miniPlayer";
 import NormalPlayer from "./normalPlayer";
 import { ISong } from "./constants";
-import { getSongUrl } from "../../api/utils";
+import { getSongUrl, shuffle, findIndex } from "../../api/utils";
 import { ChangeEventHandler } from "react";
+import Toast from "../../baseUI/Toast";
+import { playMode } from "../../api/config";
 
-const playList: ISong[] = [
-  {
-    ftype: 0,
-    djId: 0,
-    a: null,
-    cd: '01',
-    crbt: null,
-    no: 1,
-    st: 0,
-    rt: '',
-    cf: '',
-    alia: [
-      '手游《梦幻花园》苏州园林版推广曲'
-    ],
-    rtUrls: [],
-    fee: 0,
-    s_id: 0,
-    copyright: 0,
-    h: {
-      br: 320000,
-      fid: 0,
-      size: 9400365,
-      vd: -45814
-    },
-    mv: 0,
-    al: {
-      id: 84991301,
-      name: '拾梦纪',
-      picUrl: 'http://p1.music.126.net/M19SOoRMkcHmJvmGflXjXQ==/109951164627180052.jpg',
-      tns: [],
-      pic_str: '109951164627180052',
-      pic: 109951164627180050
-    },
-    name: '拾梦纪',
-    l: {
-      br: 128000,
-      fid: 0,
-      size: 3760173,
-      vd: -41672
-    },
-    rtype: 0,
-    m: {
-      br: 192000,
-      fid: 0,
-      size: 5640237,
-      vd: -43277
-    },
-    cp: 1416668,
-    mark: 0,
-    rtUrl: null,
-    mst: 9,
-    dt: 234947,
-    ar: [
-      {
-        id: 12084589,
-        name: '妖扬',
-        tns: [],
-        alias: []
-      },
-      {
-        id: 12578371,
-        name: '金天',
-        tns: [],
-        alias: []
-      }
-    ],
-    pop: 5,
-    pst: 0,
-    t: 0,
-    v: 3,
-    id: 1416767593,
-    publishTime: 0,
-    rurl: null
-  }
-];
+interface IRef {
+  show: (...rest: any) => any
+}
 
 const Player: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { fullScreen, playing, currentIndex, currentSong } = useAppSelector(state => state.player);
+  const {
+    playing,
+    currentSong,
+    currentIndex,
+    playList,
+    mode, //播放模式
+    sequencePlayList, //播放列表
+    fullScreen
+  } = useAppSelector(state => state.player);
 
   // 目前播放的时间
   const [currentTime, setCurrentTime] = useState<number>(0);
   // 歌曲总时长
   const [duration, setDuration] = useState<number>(0);
+  // 记录当前歌曲，下次渲染时对比是否是同一首歌
+  const [perSong, setPreSong] = useState<Partial<ISong>>({});
+  // 切换模式提示
+  const [modeText, setModeText] = useState<string>('');
+  const toastRef = useRef<IRef>(null);
   // 歌曲播放进度
   let percent = isNaN(currentTime / duration) ? 0 : currentTime / duration;
-
-
   // 播放标签
   const audioRef = useRef<HTMLAudioElement>(null);
 
-
   useEffect(() => {
-    if (!currentSong)
+    if (
+      !playList.length ||
+      currentIndex === -1 ||
+      !playList[currentIndex] ||
+      playList[currentIndex].id === perSong.id
+    ) {
       return;
-    // currentIndex默认为-1, 先改为0
-    dispatch(changeCurrentIndex(0));
-    let current = playList[0];
-    // 赋值currentSong
+    }
+    let current = playList[currentIndex];
     dispatch(changeCurrentSong(current));
-    audioRef.current!.src = getSongUrl(current.id);
-    //从头开始播放
-    setCurrentTime(0);
-    //时长
-    setDuration(current.dt / 1000 | 0);
-  }, [])
+    setPreSong(current);
+    audioRef!.current!.src = getSongUrl(current.id);
+    setCurrentTime(0);//从头开始播放
+    setDuration((current.dt / 1000) | 0);//时长
+    setTimeout(() => {
+      if (playing) {
+        audioRef!.current!.play();
+      }
+    })
+  }, [playList, currentIndex]);
 
   const toggleFullScreen = (data: boolean) => {
     dispatch(changeFullScreen(data));
@@ -142,7 +89,11 @@ const Player: React.FC = () => {
   }
 
   const endTime = () => {
-    dispatch(changePlaying(false));
+    if (mode === playMode.loop) {
+      handleLoop();
+    } else {
+      handleNext();
+    }
   }
 
   // 修改percent
@@ -154,6 +105,68 @@ const Player: React.FC = () => {
     if (!playing) {
       dispatch(changePlaying(true));
     }
+  }
+
+  // 一首歌循环
+  const handleLoop = () => {
+    audioRef!.current!.currentTime = 0;
+    dispatch(changePlaying(true));
+    audioRef!.current!.play();
+  }
+
+  // 上一首逻辑
+  const handlePrev = () => {
+    if (playList.length === 1) {
+      handleLoop();
+      return;
+    }
+    let index = currentIndex - 1;
+    if (index < 0) {
+      index = playList.length - 1;
+    }
+    if (!playing) {
+      dispatch(changePlaying(true));
+    }
+    dispatch(changeCurrentIndex(index));
+  }
+
+  // 下一首的逻辑
+  const handleNext = () => {
+    if (playList.length === 1) {
+      handleLoop();
+      return;
+    }
+    let index = currentIndex + 1;
+    if (index === playList.length) index = 0;
+    if (!playing) {
+      dispatch(changePlaying(true));
+    }
+    dispatch(changeCurrentIndex(index));
+  }
+
+  // 修改播放模式
+  const changeMode = () => {
+    let newMode = (mode + 1) % 3;
+    if (newMode === 0) {
+      //顺序播放
+      dispatch(changePlayList(sequencePlayList));
+      let index = findIndex(currentSong as ISong, sequencePlayList);
+      dispatch(changeCurrentIndex(index));
+      setModeText('顺序播放');
+    } else if (newMode === 1) {
+      //单曲循环
+      dispatch(changePlayList(sequencePlayList));
+      setModeText('单曲循环');
+    } else if (newMode === 2) {
+      //随机播放
+      const newList = shuffle(sequencePlayList);
+      let index = findIndex(currentSong as ISong, newList);
+      dispatch(changePlayList(newList));
+      dispatch(changeCurrentIndex(index));
+      setModeText('随机播放');
+    }
+    dispatch(changePlayMode(newMode));
+    toastRef!.current?.show();
   }
 
   return (
@@ -185,10 +198,15 @@ const Player: React.FC = () => {
             toggleFullScreen={toggleFullScreen}
             clickPlaying={clickPlaying}
             onProgressChange={onProgressChange}
+            handlePrev={handlePrev}
+            handleNext={handleNext}
+            mode={mode}
+            changeMode={changeMode}
           ></NormalPlayer>
         ) : null
       }
       <audio ref={audioRef} onTimeUpdate={updateTime} onEnded={endTime}></audio>
+      <Toast ref={toastRef} text={modeText}></Toast>
     </div>
   )
 }

@@ -1,3 +1,5 @@
+import { playMode } from "../../api/config";
+
 export interface ISong {
   al: {
     id: number,
@@ -11,6 +13,7 @@ export interface ISong {
   ar: { id: number, name: string, tns: any[], alias: any[] }[],
   [propName: string]: any
 }
+
 export interface IProps {
   fullScreen: boolean,
   song: ISong,
@@ -22,3 +25,10 @@ export interface IProps {
   clickPlaying: (e: any, play: boolean) => any;
   onProgressChange?: (curPercent: number) => void;
 }
+
+export interface INormalProps extends IProps {
+  handlePrev: () => void;
+  handleNext: () => void;
+  mode: playMode;
+  changeMode: () => void;
+} 
