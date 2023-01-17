@@ -10,11 +10,15 @@ import { BScrollConstructor } from "@better-scroll/core/dist/types/BScroll";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { getSingerInfo } from "./feature";
 import Loading from "../../baseUI/loading";
-
+import MusicNote from "../../baseUI/musicNote";
 
 interface IRef {
   refresh: (...rest: any) => any | undefined,
   getBScroll: (...rest: any) => BScrollConstructor | undefined
+}
+
+interface IMRef {
+  startAnimation: (...rest: any) => any
 }
 
 const Singer: React.FC = () => {
@@ -27,6 +31,7 @@ const Singer: React.FC = () => {
   const songScroll = useRef<IRef>(null);
   const header = useRef<HTMLDivElement>(null);
   const layer = useRef<HTMLDivElement>(null);
+  const musicRef = useRef<IMRef>(null);
 
   // 图片初始高度
   const initialHeight = useRef<number>(0);
@@ -105,6 +110,10 @@ const Singer: React.FC = () => {
     }
   }, [])
 
+  const musicAnimation = (x: number, y: number) => {
+    musicRef!.current!.startAnimation({ x, y });
+  };
+
   return (
     <CSSTransition
       in={showStatus}
@@ -131,9 +140,11 @@ const Singer: React.FC = () => {
               showBackground={false}
               songs={songs}
               showCollect={false}
+              musicAnimation={musicAnimation}
             ></SongList>
           </Scroll>
         </SongListWrapper>
+        <MusicNote ref={musicRef}></MusicNote>
       </Container>
     </CSSTransition>
   )

@@ -10,9 +10,14 @@ import { changeEnterLoading, getAlbumDetail } from "./feature";
 import { useAppSelector, useAppDispatch } from "../../store";
 import Loading from "../../baseUI/loading";
 import SongList from "../SongList";
+import MusicNote from "../../baseUI/musicNote";
 
 //定义滚动触发滑动的高度
 export const HEADER_HEIGHT = 45;
+
+interface IRef {
+  startAnimation: (...rest: any) => any
+}
 
 const Album: React.FC = () => {
 
@@ -23,6 +28,7 @@ const Album: React.FC = () => {
   const [title, setTitle] = useState<string>('歌单');
   const [isMarquee, setIsMarquee] = useState<boolean>(false);
   const headerEl = useRef<HTMLDivElement>(null);
+  const musicNoteRef = useRef<IRef>(null);
 
   const dispatch = useAppDispatch();
   const { currentAlbum, enterLoading } = useAppSelector(state => state.album);
@@ -120,10 +126,16 @@ const Album: React.FC = () => {
           collectCount={currentAlbum.subscribedCount}
           showCollect={true}
           showBackground={true}
+          musicAnimation={musicAnimation}
         ></SongList>
       </>
 
     )
+  }
+
+  // 动画逻辑
+  const musicAnimation = (x: number, y: number) => {
+    musicNoteRef!.current!.startAnimation({ x, y });
   }
 
   return (
@@ -145,6 +157,7 @@ const Album: React.FC = () => {
             {renderSongList({})}
           </div>
         </Scroll>
+        <MusicNote ref={musicNoteRef}></MusicNote>
       </Container>
     </CSSTransition>
 

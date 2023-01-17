@@ -2,6 +2,8 @@ import React from 'react';
 import { SongList, SongItem } from './style';
 import { getName } from '../../api/utils';
 import { PlayCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { changePlayList, changeCurrentIndex, changeSequencePlayList } from '../Player/feature';
+import { useAppDispatch } from '../../store';
 
 type IRef = HTMLElement
 
@@ -9,17 +11,22 @@ interface IProps {
   showBackground: boolean,
   collectCount?: number,
   showCollect: boolean,
-  songs: any[]
+  songs: any[],
+  musicAnimation: (x: number, y: number) => any
 }
 
 const SongListComponent = React.forwardRef<IRef, IProps>((props, ref) => {
 
-  const { collectCount, showCollect, songs } = props;
+  const { collectCount, showCollect, songs, musicAnimation } = props;
+  const dispatch = useAppDispatch();
 
   const totalCount = songs.length;
 
   const selectItem = (e: any, index: number) => {
-    console.log(index);
+    dispatch(changePlayList(songs));
+    dispatch(changeSequencePlayList(songs));
+    dispatch(changeCurrentIndex(index));
+    musicAnimation(e.nativeEvent.clientX, e.nativeEvent.clientY)
   }
 
   const songList = (list: any[]) => {
