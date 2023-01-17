@@ -19,6 +19,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 const Singers: React.FC = () => {
   const { pageCount, singerList, enterLoading, pullUpLoading, pullDownLoading } = useAppSelector(state => state.singers);
+  const { playList } = useAppSelector(state => state.player);
   const dispatch = useAppDispatch();
   const { data, categoryDispatch } = useContext(CategoryDataContext);
   const { category, alpha } = data;
@@ -90,7 +91,7 @@ const Singers: React.FC = () => {
         <Horizon oldVal={category} list={categoryTypes} title={'分类:(默认热门):'} handleClick={handleUpdateCategory}></Horizon>
         <Horizon oldVal={alpha} list={alphaTypes} title={'首字母:'} handleClick={handleUpdateAlpha}></Horizon>
       </NavContainer>
-      <ListContainer>
+      <ListContainer songCount={playList.length}>
         {enterLoading ? <Loading></Loading> : null}
         <Scroll
           onScroll={forceCheck}

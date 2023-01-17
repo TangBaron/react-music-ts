@@ -6,7 +6,7 @@ export const Container = styled.div`
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: ${(props: { songCount: number }) => props.songCount > 0 ? '60px' : 0};
   z-index: 100;
   background: ${style['background-color']};
   //元素变形的原点，比如旋转动画的原点等, 注意css中的旋转遵循的是左手定则

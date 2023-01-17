@@ -14,6 +14,7 @@ import { Outlet } from "react-router-dom";
 const Recommand: React.FC = () => {
 
   const { bannerList, recommendList, enterLoading } = useAppSelector(state => state.recommend);
+  const { playList } = useAppSelector(state => state.player);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -27,7 +28,7 @@ const Recommand: React.FC = () => {
 
 
   return (
-    <Content>
+    <Content songCount={playList.length}>
       <Scroll onScroll={forceCheck}>
         <div>
           <Slider bannerList={bannerList}></Slider>

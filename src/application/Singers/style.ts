@@ -14,7 +14,7 @@ export const ListContainer = styled.div`
   position: fixed;
   top: 170px;
   left: 0;
-  bottom: 0;
+  bottom: ${(props: { songCount: number }) => props.songCount > 0 ? '60px' : 0};
   overflow: hidden;
   width: 100%;
 `;

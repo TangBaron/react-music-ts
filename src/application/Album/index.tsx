@@ -32,6 +32,7 @@ const Album: React.FC = () => {
 
   const dispatch = useAppDispatch();
   const { currentAlbum, enterLoading } = useAppSelector(state => state.album);
+  const { playList } = useAppSelector(state => state.player);
   const { id } = useParams();
   useEffect(() => {
     dispatch(changeEnterLoading(true))
@@ -147,7 +148,7 @@ const Album: React.FC = () => {
       unmountOnExit
       onExited={() => { navigate(-1) }}
     >
-      <Container>
+      <Container songCount={playList.length}>
         {enterLoading ? <Loading></Loading> : null}
         <Header ref={headerEl} title={title} isMarquee={isMarquee} handleClick={() => { setShowStatus(false) }}></Header>
         <Scroll bounceTop={false} onScroll={handleScroll}>

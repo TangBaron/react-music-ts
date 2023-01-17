@@ -12,6 +12,7 @@ import { Outlet } from "react-router-dom";
 const Rank: React.FC = () => {
   // list数据
   const { rankList, loading } = useAppSelector(state => state.rank);
+  const { playList } = useAppSelector(state => state.player);
   const dispatch = useAppDispatch();
   // 处理两种数据
   const globalStartIndex = filterIndex(rankList);
@@ -67,7 +68,7 @@ const Rank: React.FC = () => {
   }
 
   return (
-    <Container>
+    <Container songCount={playList.length}>
       <Scroll>
         <div>
           <h1 className="offical" style={displayStyle}> 官方榜 </h1>

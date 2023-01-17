@@ -205,7 +205,9 @@ const Player: React.FC = () => {
           ></NormalPlayer>
         ) : null
       }
-      <audio ref={audioRef} onTimeUpdate={updateTime} onEnded={endTime}></audio>
+      <audio ref={audioRef} onTimeUpdate={updateTime} onEnded={endTime} onError={() => {
+        alert('播放器资源加载错误或切歌过快，请重试!');
+      }}></audio>
       <Toast ref={toastRef} text={modeText}></Toast>
     </div>
   )
