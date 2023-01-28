@@ -57,4 +57,8 @@ export const getSingerInfoRequest = (id: string) => {
   return axiosInstance.get(`/artists?id=${id}`);
 }
 
+export const getLyricRequest: (id: string) => { [props: string]: any } = (id: string) => {
+  return axiosInstance.get(`/lyric?id=${id}`);
+}
+
 

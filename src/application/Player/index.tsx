@@ -18,6 +18,7 @@ import { ChangeEventHandler } from "react";
 import Toast from "../../baseUI/Toast";
 import { playMode } from "../../api/config";
 import PlayList from "./playList";
+import { getLyricRequest } from "../../api/request";
 
 interface IRef {
   show: (...rest: any) => any
@@ -49,6 +50,25 @@ const Player: React.FC = () => {
   // 播放标签
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  // 歌词相关
+  const currentLyric = useRef(null);
+  const [songReady, setSongReady] = useState<boolean>(true);
+
+  // 获取歌词的方法
+  const getLyric = (id: string) => {
+    let lyric = "";
+    getLyricRequest(id).then(
+      (data: { [props: string]: any }) => {
+        data = data.data;
+        lyric = data.lrc.lyric;
+        if (!lyric) {
+          currentLyric.current = null;
+          return;
+        }
+      }
+    )
+  }
+
   useEffect(() => {
     if (
       !playList.length ||
@@ -62,6 +82,8 @@ const Player: React.FC = () => {
     dispatch(changeCurrentSong(current));
     setPreSong(current);
     audioRef!.current!.src = getSongUrl(current.id);
+    // 获取歌词
+    getLyric(current.id);
     setCurrentTime(0);//从头开始播放
     setDuration((current.dt / 1000) | 0);//时长
     setTimeout(() => {
