@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { playMode } from "../../../api/config";
+import { findIndex } from "../../../api/utils";
 
 interface IState {
   // 播放是否为全屏模式
@@ -59,9 +60,31 @@ const PlayerSlice = createSlice({
     },
     changeShowPlayList: (state, action) => {
       state.showPlayList = action.payload;
+    },
+    // 删除歌曲的逻辑
+    deleteSong: (state, action) => {
+      const song = action.payload;
+      const playList = state.playList;
+      const sequenceList = state.sequencePlayList;
+      let currentIndex = state.currentIndex;
+      // 找对应歌曲在列表中的索引
+      const fpIndex = findIndex(song, playList);
+      // 在播放列表中删除
+      playList.splice(fpIndex, 1);
+      // 如果删除的歌曲排在当前播放歌曲前面，那么currentIndex--
+      if (fpIndex < currentIndex) {
+        currentIndex--;
+      }
+      // 在sequencelist中直接删除歌曲
+      const fsIndex = findIndex(song, sequenceList);
+      sequenceList.splice(fsIndex, 1);
+      // 重新赋值
+      state.playList = playList;
+      state.sequencePlayList = sequenceList;
+      state.currentIndex = currentIndex;
     }
   }
 })
 
-export const { changeCurrentSong, changeFullScreen, changePlaying, changeSequencePlayList, changePlayList, changePlayMode, changeCurrentIndex, changeShowPlayList } = PlayerSlice.actions;
+export const { changeCurrentSong, changeFullScreen, changePlaying, changeSequencePlayList, changePlayList, changePlayMode, changeCurrentIndex, changeShowPlayList, deleteSong } = PlayerSlice.actions;
 export const reducer = PlayerSlice.reducer;

@@ -22,6 +22,7 @@ export interface IProps {
   duration: number, //播放的总时长
   currentTime: number, //当前播放的时间
   toggleFullScreen: (data: boolean) => void
+  togglePlayList: (data: boolean) => void
   clickPlaying: (e: any, play: boolean) => any;
   onProgressChange?: (curPercent: number) => void;
 }

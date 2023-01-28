@@ -17,6 +17,7 @@ import { getSongUrl, shuffle, findIndex } from "../../api/utils";
 import { ChangeEventHandler } from "react";
 import Toast from "../../baseUI/Toast";
 import { playMode } from "../../api/config";
+import PlayList from "./playList";
 
 interface IRef {
   show: (...rest: any) => any
@@ -39,7 +40,7 @@ const Player: React.FC = () => {
   // 歌曲总时长
   const [duration, setDuration] = useState<number>(0);
   // 记录当前歌曲，下次渲染时对比是否是同一首歌
-  const [perSong, setPreSong] = useState<Partial<ISong>>({});
+  const [preSong, setPreSong] = useState<Partial<ISong>>({});
   // 切换模式提示
   const [modeText, setModeText] = useState<string>('');
   const toastRef = useRef<IRef>(null);
@@ -53,7 +54,7 @@ const Player: React.FC = () => {
       !playList.length ||
       currentIndex === -1 ||
       !playList[currentIndex] ||
-      playList[currentIndex].id === perSong.id
+      playList[currentIndex].id === preSong.id
     ) {
       return;
     }
@@ -72,6 +73,10 @@ const Player: React.FC = () => {
 
   const toggleFullScreen = (data: boolean) => {
     dispatch(changeFullScreen(data));
+  }
+
+  const toggleShowPlayList = (data: boolean) => {
+    dispatch(changeShowPlayList(data));
   }
 
   const clickPlaying = (e: React.MouseEvent, state: boolean) => {
@@ -182,6 +187,7 @@ const Player: React.FC = () => {
             duration={duration}
             currentTime={currentTime}
             toggleFullScreen={toggleFullScreen}
+            togglePlayList={toggleShowPlayList}
             clickPlaying={clickPlaying}
           ></MiniPlayer>
         ) : null
@@ -196,6 +202,7 @@ const Player: React.FC = () => {
             duration={duration}
             currentTime={currentTime}
             toggleFullScreen={toggleFullScreen}
+            togglePlayList={toggleShowPlayList}
             clickPlaying={clickPlaying}
             onProgressChange={onProgressChange}
             handlePrev={handlePrev}
@@ -208,6 +215,7 @@ const Player: React.FC = () => {
       <audio ref={audioRef} onTimeUpdate={updateTime} onEnded={endTime} onError={() => {
         alert('播放器资源加载错误或切歌过快，请重试!');
       }}></audio>
+      <PlayList setPre={() => { setPreSong({}) }}></PlayList>
       <Toast ref={toastRef} text={modeText}></Toast>
     </div>
   )

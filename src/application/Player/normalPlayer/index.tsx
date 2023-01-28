@@ -35,6 +35,7 @@ const NormalPlayer = (props: INormalProps) => {
     duration,
     currentTime,
     toggleFullScreen,
+    togglePlayList,
     clickPlaying,
     onProgressChange,
     handlePrev,
@@ -131,6 +132,11 @@ const NormalPlayer = (props: INormalProps) => {
     }
   }
 
+  const handleTogglePlayList = (e: React.MouseEvent) => {
+    togglePlayList(true);
+    e.stopPropagation();
+  }
+
   return (
     <CSSTransition
       in={fullScreen}
@@ -199,7 +205,7 @@ const NormalPlayer = (props: INormalProps) => {
             <div className="icon i-right" onClick={handleNext}>
               <StepForwardOutlined className="iconfont"></StepForwardOutlined>
             </div>
-            <div className="icon i-right">
+            <div className="icon i-right" onClick={handleTogglePlayList}>
               <BarsOutlined className="iconfont"></BarsOutlined>
             </div>
           </Operators>

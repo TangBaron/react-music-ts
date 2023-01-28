@@ -13,9 +13,15 @@ const MiniPlayer = (props: IProps) => {
     playing,
     percent,
     toggleFullScreen,
+    togglePlayList,
     clickPlaying,
   } = props;
   const miniPlayerRef = useRef<HTMLDivElement>(null);
+
+  const handleTogglePlayList = (e: React.MouseEvent) => {
+    togglePlayList(true);
+    e.stopPropagation();
+  }
 
   return (
     <CSSTransition
@@ -51,8 +57,8 @@ const MiniPlayer = (props: IProps) => {
             }
           </ProgressCircle>
         </div>
-        <div className="control">
-          < BarsOutlined className="iconfont" />
+        <div className="control" onClick={handleTogglePlayList}>
+          <BarsOutlined className="iconfont" />
         </div>
       </MiniPlayerContainer>
     </CSSTransition>
