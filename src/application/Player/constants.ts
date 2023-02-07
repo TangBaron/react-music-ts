@@ -1,4 +1,5 @@
 import { playMode } from "../../api/config";
+import Lyric from "../../api/lyric-parser";
 
 export interface ISong {
   al: {
@@ -32,4 +33,7 @@ export interface INormalProps extends IProps {
   handleNext: () => void;
   mode: playMode;
   changeMode: () => void;
+  currentLyric: Lyric | null;
+  currentPlayingLyric: string;
+  currentLineNum: number;
 } 

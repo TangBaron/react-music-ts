@@ -19,6 +19,7 @@ import Toast from "../../baseUI/Toast";
 import { playMode } from "../../api/config";
 import PlayList from "./playList";
 import { getLyricRequest } from "../../api/request";
+import Lyric from "../../api/lyric-parser";
 
 interface IRef {
   show: (...rest: any) => any
@@ -51,12 +52,29 @@ const Player: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // 歌词相关
-  const currentLyric = useRef(null);
-  const [songReady, setSongReady] = useState<boolean>(true);
+  // 目前的歌词
+  const currentLyric = useRef<Lyric | null>(null);
+  // 当前的即时歌词
+  const [currentPlayingLyric, setPlayingLyric] = useState<string>('');
+  // 当前的行数
+  const currentLineNum = useRef<number>(0);
+
+  // 处理歌词的回调
+  const handleLyric = (res: { lineNum: number, txt: string }) => {
+    const { lineNum, txt } = res;
+    if (!currentLyric.current) {
+      return;
+    }
+    currentLineNum.current = lineNum;
+    setPlayingLyric(txt);
+  }
 
   // 获取歌词的方法
   const getLyric = (id: string) => {
     let lyric = "";
+    if (currentLyric.current) {
+      currentLyric.current.stop();
+    }
     getLyricRequest(id).then(
       (data: { [props: string]: any }) => {
         data = data.data;
@@ -65,6 +83,8 @@ const Player: React.FC = () => {
           currentLyric.current = null;
           return;
         }
+        currentLyric.current = new Lyric(lyric, handleLyric);
+        currentLineNum.current = 0;
       }
     )
   }
@@ -101,9 +121,13 @@ const Player: React.FC = () => {
     dispatch(changeShowPlayList(data));
   }
 
+  // 歌曲暂停/播放中加入逻辑
   const clickPlaying = (e: React.MouseEvent, state: boolean) => {
     e.stopPropagation();
     dispatch(changePlaying(state));
+    if (currentLyric.current) {
+      currentLyric.current.togglePlay(currentTime * 1000);
+    }
   }
 
   useEffect(() => {
@@ -131,6 +155,9 @@ const Player: React.FC = () => {
     audioRef.current!.currentTime = newTime;
     if (!playing) {
       dispatch(changePlaying(true));
+    }
+    if (currentLyric.current) {
+      currentLyric.current.seek(newTime * 1000);
     }
   }
 
@@ -231,6 +258,9 @@ const Player: React.FC = () => {
             handleNext={handleNext}
             mode={mode}
             changeMode={changeMode}
+            currentLyric={currentLyric.current}
+            currentPlayingLyric={currentPlayingLyric}
+            currentLineNum={currentLineNum.current}
           ></NormalPlayer>
         ) : null
       }

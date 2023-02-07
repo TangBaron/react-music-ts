@@ -1,5 +1,3 @@
-import React from "react";
-
 const timeExp = /\[(\d{2,}):(\d{2})(?:\.(\d{2,3}))?]/g;
 
 const STATE_PAUSE = 0;
@@ -11,7 +9,7 @@ export default class Lyric {
   //解析后的数组，每一项包含对应的歌词和时间
   lines: any[];
   //回调函数
-  handler: (...rest: any) => any;
+  handler: (res: { lineNum: number, txt: string }) => any;
   //当前播放状态
   state: number;
   //当前播放歌词所在的行数
@@ -24,7 +22,7 @@ export default class Lyric {
    * @params {string} lrc
    * @params {function} handler
   */
-  constructor(lrc: string, handler = () => { }) {
+  constructor(lrc: string, handler: (res: { lineNum: number, txt: string }) => any) {
     this.lrc = lrc;
     this.lines = [];
     this.handler = handler;

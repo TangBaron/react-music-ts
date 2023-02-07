@@ -43,7 +43,7 @@ interface IProps {
 }
 
 //获得的ref
-interface IRef {
+export interface IRef {
   refresh: (...rest: any) => any | undefined,
   getBScroll: (...rest: any) => BScrollConstructor | undefined
 }
