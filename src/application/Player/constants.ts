@@ -36,4 +36,6 @@ export interface INormalProps extends IProps {
   currentLyric: Lyric | null;
   currentPlayingLyric: string;
   currentLineNum: number;
+  speed: number,
+  clickSpeed: (newSpeed: number) => void
 } 

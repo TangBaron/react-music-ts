@@ -22,6 +22,15 @@ const noWrap = () => {
   `
 }
 
+// 设定needle和CD图片的位置, 把图片放在中间
+const bgFull = () => {
+  return `
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+  `
+}
+
 export default {
   'theme-color': '#d44439',
   'theme-color-shadow': 'rgba(212, 68, 57, .5)',
@@ -35,8 +44,11 @@ export default {
   'font-size-ll': '18px',
   "border-color": '#e4e4e4',
   'background-color': '#f2f3f4',
-  'background-color-shadow': 'rgba (0, 0, 0, 0.3)',
+  'background-color-shadow': 'rgba(0, 0, 0, 0.3)',
   'highlight-background-color': '#fff',
+  // 下面的border-color-v2是灰色边框
+  "border-color-v2": "rgba(228, 228, 228, 0.1)",
   extendClick,
-  noWrap
+  noWrap,
+  bgFull
 }

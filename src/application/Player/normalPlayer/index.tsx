@@ -9,7 +9,9 @@ import {
   ProgressWrapper,
   Operators,
   LyricContainer,
-  LyricWrapper
+  LyricWrapper,
+  List,
+  ListItem
 } from './style';
 import {
   LeftOutlined,
@@ -28,7 +30,7 @@ import animations from 'create-keyframe-animation';
 import ProgressBar from "../../../baseUI/progress_bar";
 import { playMode } from "../../../api/config";
 import Scroll, { IRef } from "../../../baseUI/scroll";
-import BScroll from "@better-scroll/core";
+import { list } from '../../../api/config';
 
 const NormalPlayer = (props: INormalProps) => {
   const {
@@ -48,7 +50,9 @@ const NormalPlayer = (props: INormalProps) => {
     changeMode,
     currentLineNum,
     currentPlayingLyric,
-    currentLyric
+    currentLyric,
+    speed,
+    clickSpeed
   } = props;
   const normalPlayerRef = useRef<HTMLDivElement>(null);
   const cdWrapperRef = useRef<HTMLDivElement>(null);
@@ -200,8 +204,10 @@ const NormalPlayer = (props: INormalProps) => {
           <div className="back" onClick={() => toggleFullScreen(false)}>
             <LeftOutlined className="iconfont"></LeftOutlined>
           </div>
-          <h1 className="title">{song.name}</h1>
-          <h1 className="subtitle">{getName(song.ar)}</h1>
+          <div className="text">
+            <h1 className="title">{song.name}</h1>
+            <h1 className="subtitle">{getName(song.ar)}</h1>
+          </div>
         </Top>
         <Middle ref={cdWrapperRef} onClick={toggleCurrentState}>
           <CSSTransition
@@ -210,6 +216,7 @@ const NormalPlayer = (props: INormalProps) => {
             in={currentState !== 'lyric'}
           >
             <CDWrapper style={{ visibility: currentState !== "lyric" ? "visible" : "hidden" }}>
+              <div className={`needle ${playing ? '' : 'pause'}`}></div>
               <div className="cd">
                 <img
                   className={`image play ${playing ? '' : 'pause'}`}
@@ -254,6 +261,22 @@ const NormalPlayer = (props: INormalProps) => {
           </CSSTransition>
         </Middle>
         <Bottom className="bottom">
+          <List>
+            <span > 倍速听歌 </span>
+            {
+              list.map((item) => {
+                return (
+                  <ListItem
+                    key={item.key}
+                    className={`${speed === item.key ? 'selected' : ''}`}
+                    onClick={() => clickSpeed(item.key)}
+                  >
+                    {item.name}
+                  </ListItem>
+                )
+              })
+            }
+          </List>
           <ProgressWrapper>
             <span className="time time-l">{formatPlayTime(currentTime)}</span>
             <div className="progress-bar-wrapper">

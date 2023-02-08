@@ -18,18 +18,21 @@ export default class Lyric {
   startStamp: number;
   // 时间戳
   timer: ReturnType<typeof setTimeout> | null;
+  // 播放倍速
+  speed: number
   /**
    * @params {string} lrc
    * @params {function} handler
   */
-  constructor(lrc: string, handler: (res: { lineNum: number, txt: string }) => any) {
+  constructor(lrc: string, handler: (res: { lineNum: number, txt: string }) => any, playing: boolean) {
     this.lrc = lrc;
     this.lines = [];
     this.handler = handler;
-    this.state = STATE_PAUSE;
+    this.state = playing ? STATE_PLAYING : STATE_PAUSE;
     this.curLineIndex = 0;
     this.startStamp = 0;
     this.timer = null;
+    this.speed = 1;
 
     this._initLines();
   }
@@ -95,7 +98,7 @@ export default class Lyric {
         //递归调用保证播放完成
         this._playRest();
       }
-    }, delay)
+    }, delay / this.speed)
   }
 
   //offset 为时间进度，isSeek 标志位表示用户是否手动调整进度
@@ -137,5 +140,9 @@ export default class Lyric {
 
   seek(offset: number) {
     this.play(offset, true)
+  }
+
+  changeSpeed(speed: number) {
+    this.speed = speed;
   }
 }

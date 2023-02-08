@@ -6,8 +6,8 @@ import {
   changePlayList,
   changePlayMode,
   changePlaying,
-  changeSequencePlayList,
-  changeShowPlayList
+  changeShowPlayList,
+  changeSpeed
 } from './feature';
 import { useAppDispatch, useAppSelector } from "../../store";
 import MiniPlayer from "./miniPlayer";
@@ -34,7 +34,8 @@ const Player: React.FC = () => {
     playList,
     mode, //播放模式
     sequencePlayList, //播放列表
-    fullScreen
+    fullScreen,
+    speed
   } = useAppSelector(state => state.player);
 
   // 目前播放的时间
@@ -83,8 +84,11 @@ const Player: React.FC = () => {
           currentLyric.current = null;
           return;
         }
-        currentLyric.current = new Lyric(lyric, handleLyric);
+        currentLyric.current = new Lyric(lyric, handleLyric, playing);
         currentLineNum.current = 0;
+        if (playing) {
+          currentLyric.current.play();
+        }
       }
     )
   }
@@ -102,6 +106,8 @@ const Player: React.FC = () => {
     dispatch(changeCurrentSong(current));
     setPreSong(current);
     audioRef!.current!.src = getSongUrl(current.id);
+    // 加上播放速度控制
+    audioRef!.current!.playbackRate = speed;
     // 获取歌词
     getLyric(current.id);
     setCurrentTime(0);//从头开始播放
@@ -166,6 +172,7 @@ const Player: React.FC = () => {
     audioRef!.current!.currentTime = 0;
     dispatch(changePlaying(true));
     audioRef!.current!.play();
+    getLyric(playList[currentIndex].id);
   }
 
   // 上一首逻辑
@@ -223,6 +230,16 @@ const Player: React.FC = () => {
     toastRef!.current?.show();
   }
 
+  // 点击修改播放速度的函数
+  const clickSpeed = (newSpeed: number) => {
+    dispatch(changeSpeed(newSpeed));
+    // 修改播放速度
+    audioRef!.current!.playbackRate = newSpeed;
+    // 同步歌词
+    currentLyric!.current!.changeSpeed(newSpeed);
+    currentLyric!.current!.seek(currentTime * 1000);
+  }
+
   return (
     <div>
       {
@@ -261,6 +278,8 @@ const Player: React.FC = () => {
             currentLyric={currentLyric.current}
             currentPlayingLyric={currentPlayingLyric}
             currentLineNum={currentLineNum.current}
+            speed={speed}
+            clickSpeed={clickSpeed}
           ></NormalPlayer>
         ) : null
       }

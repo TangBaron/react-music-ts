@@ -20,6 +20,8 @@ interface IState {
   currentSong: {
     [propName: string]: any
   }
+  // 播放速度
+  speed: number
 }
 
 const initialState: IState = {
@@ -30,7 +32,8 @@ const initialState: IState = {
   mode: playMode.sequence,
   currentIndex: 0,
   showPlayList: false,
-  currentSong: {}
+  currentSong: {},
+  speed: 1
 }
 
 const PlayerSlice = createSlice({
@@ -82,9 +85,13 @@ const PlayerSlice = createSlice({
       state.playList = playList;
       state.sequencePlayList = sequenceList;
       state.currentIndex = currentIndex;
+    },
+    // 修改倍速的逻辑
+    changeSpeed: (state, action) => {
+      state.speed = action.payload;
     }
   }
 })
 
-export const { changeCurrentSong, changeFullScreen, changePlaying, changeSequencePlayList, changePlayList, changePlayMode, changeCurrentIndex, changeShowPlayList, deleteSong } = PlayerSlice.actions;
+export const { changeCurrentSong, changeFullScreen, changePlaying, changeSequencePlayList, changePlayList, changePlayMode, changeCurrentIndex, changeShowPlayList, deleteSong, changeSpeed } = PlayerSlice.actions;
 export const reducer = PlayerSlice.reducer;
